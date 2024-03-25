@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/src/templates/header.css" />
+    <link rel="stylesheet" href="./assets/src/styles.css" />
+    <link rel="stylesheet" href="./assets/src/card.css" />
+    <link rel="shortcut icon" href="./assets/icons/pokeball.png" type="image/x-icon" />
+    <script src="./assets/src/includeHTML.js"></script>
+    <script src="./assets/src/script.js"></script>
+    <title>Pokédex</title>
+  </head>
+  <body onload="init()">
+    <div class="header_template" w3-include-html=".\assets\src\templates\header.html"></div>
+    <div id="pokemonCards"></div>
+    <div id="dialog_bg" class="dialog_bg d_none" onclick="closeDialog()">
+      <div id="pokemonCard" class="card">
+        <div id="top_area" class="background_image">
+          <div class="nav_area">
+            <img src="./assets/icons/left-arrow.png" alt="left-arrow" />
+            <img src="./assets/icons/right-arrow.png" alt="right-arrow" />
+          </div>
+          <div class="short_info">
+            <div>
+              <div id="pokeName"></div>
+              <div id="type_area"></div>
+            </div>
+            <div class="id_area">
+              <div id="id_area"></div>
+            </div>
+            
+          </div>
+          <div class="flex_1"></div>
+        </div>
+        <div class="art_area">
+          <img id="pokemonImage" src="" alt="" />
+        </div>
+        <div class="bottom_area">
+          <div class="stats_nav">
+            <div class="stats_menu_item active">About</div>
+            <div class="stats_menu_item">Base Stats</div>
+            <div class="stats_menu_item">Evolution</div>
+            <div class="stats_menu_item">Moves</div>
+          </div>
+          <div id="stats" class="">
+            <table>
+              <tr>
+                <th>Spezies</th>
+                <td id="species">sdas</td>
+              </tr>
+              <tr>
+                <th>Größe</th>
+                <td id="height">dasda</td>
+              </tr>
+              <tr>
+                <th>Gewicht</th>
+                <td id="weight">das</td>
+              </tr>
+              <tr>
+                <th>Fähigkeiten</th>
+                <td id="abilities">dasd</td>
+              </tr>
+            </table>
+            <div class="header_stats">Fortpflanzung</div>
+            <table>
+              <tr>
+                <th>Geschlecht</th>
+                <td id="gender">sdas</td>
+              </tr>
+              <tr>
+                <th>Egg Groups</th>
+                <td id="eggGroup">dasda</td>
+              </tr>
+              <tr>
+                <th>Egg Cycle</th>
+                <td id="eggCycle">das</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,185 @@
+.dialog_bg {
+  background-color: rgba(105, 105, 105, 0.308);
+  backdrop-filter: blur(10px);
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.card {
+  max-width: 600px;
+  width: 50%;
+  background-color: rgb(192, 191, 191);
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 32px;
+  width: 100%;
+  color: white;
+}
+
+.background_image {
+  background-image: url("../icons/game_transp.png");
+  height: 60%;
+  background-position: 116% 100%;
+  background-repeat: no-repeat;
+  background-size: 60%;
+  position: relative;
+  z-index: 1;
+  border-radius: 32px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.bottom_area {
+  background-color: white;
+  color: darkslategrey;
+  font-weight: 900;
+  height: 50%;
+  position: relative;
+  bottom: 0;
+  z-index: 2;
+  border-radius: 32px;
+  margin-top: -40px;
+  padding: 32px;
+  padding-top: 50px;
+}
+
+.nav_area {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 40px;
+}
+
+.nav_area img {
+  height: 20px;
+}
+
+.top_area {
+  display: flex;
+  flex-direction: column;
+}
+
+#pokeName {
+  font-size: 42px;
+  font-weight: bold;
+}
+
+#type_area {
+  display: flex;
+  gap: 8px;
+}
+
+.short_info {
+  display: flex;
+}
+
+.id_area {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex: 1;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#pokemonImage {
+  height: 25vh;
+  position: absolute;
+  transform: translate(0, -48%);
+}
+
+.art_area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  flex: 1;
+}
+
+.stats_nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid gainsboro;
+}
+
+.stats_menu_item {
+  cursor: pointer;
+  color: gainsboro;
+  font-weight: bolder;
+}
+
+.active {
+  color: rgb(97, 96, 96);
+  text-decoration: underline;
+  text-decoration-color: darkblue;
+  text-underline-offset: 24px;
+  text-decoration-thickness: 2px;
+}
+th {
+  color: rgb(148, 148, 148);
+  text-align: left;
+}
+
+td {
+  padding: 12px;
+  text-align: left;
+}
+
+.header_stats {
+  font-size: 22px;
+  padding: 12px 0;
+}
+
+#gender img{
+    height: 16px;
+}
+
+#gender {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.flex_1 {
+  flex: 1;
+  min-height: 20vh;
+}
+
+@media (max-width: 900px) {
+  .card {
+    width: 90%;
+  }
+}
+
+@media (max-width: 450px) {
+  #pokeName {
+    font-size: 32px;
+    padding-bottom: 16px;
+  }
+  .card {
+    width: 100%;
+  }
+  .background_image {
+    background-position: 146% 105%;
+  }
+  .stats_nav {
+    gap: 6px;
+  }
+  .bottom_area {
+    padding: 16px;
+    padding-top: 50px;
+  }
+}

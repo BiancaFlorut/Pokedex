@@ -1,0 +1,155 @@
+@font-face {
+  font-family: "Open Sans";
+  src: url("../fonts/OpenSans-Regular.ttf");
+}
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: "Open Sans";
+}
+
+#pokemonCards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.pokemonCard {
+  padding: 16px;
+  background-color: antiquewhite;
+  border-radius: 16px;
+  display: flex;
+  min-height: 160px;
+  width: 240px;
+  color: white;
+  background-image: url("../icons/game_transparent2.png");
+  background-position-x: 110%;
+  background-position-y: 120%;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+.pokemonCard:hover{
+  box-shadow: 0 0 10px rgba(128, 128, 128, 0.534);
+  filter: brightness(105%);
+}
+
+.image {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  height: auto;
+  flex: 1;
+}
+
+.df_row {
+  display: flex;
+  flex-direction: row;
+}
+
+.df_column {
+  display: flex;
+  flex-direction: column;
+}
+
+.df_column h2 {
+  margin: 0;
+}
+
+.gap_8 {
+  gap: 8px;
+}
+
+.image img {
+  height: 120px;
+}
+
+.normal {
+  background-color: #bbbcaa;
+}
+
+.grass {
+  background-color: #89d750;
+}
+
+.fire {
+  background-color: #fa5343;
+}
+
+.water {
+  background-color: #55abff;
+}
+
+.fighting {
+  background-color: #a85543;
+}
+
+.flying {
+  background-color: #79a4ff;
+}
+
+.poison {
+  background-color: #a45899;
+}
+
+.ground {
+  background-color: #edce5a;
+}
+
+.rock {
+  background-color: #cebc72;
+}
+
+.bug {
+  background-color: #c3d21f;
+}
+
+.ghost {
+  background-color: #7a76d5;
+}
+
+.electric {
+  background-color: #fde841;
+}
+
+.psychic {
+  background-color: #f567b3;
+}
+
+.ice {
+  background-color: #95f1fe;
+}
+
+.dragon {
+  background-color: #8b77fa;
+}
+
+.dark {
+  background-color: #8c6754;
+}
+
+.steel {
+  background-color: #c4c2da;
+}
+
+.fairy {
+  background-color: #f8adff;
+}
+
+.type_label {
+  background-color: rgba(255, 255, 255, 0.171);
+  border-radius: 16px;
+  padding: 6px 16px;
+  width: fit-content;
+}
+
+.id {
+  text-align: right;
+  font-size: 32px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.219);
+}
