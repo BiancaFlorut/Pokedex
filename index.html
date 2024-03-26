@@ -10,6 +10,7 @@
     <script src="./assets/src/includeHTML.js"></script>
     <script src="./assets/src/script.js"></script>
     <script src="./assets/src/cardMenu.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Pokédex</title>
   </head>
   <body onload="init()">
@@ -78,7 +79,11 @@
               </tr>
             </table>
           </div>
-          <div id="baseStats" class="d_none"><h1>Base Stats!!!!!!</h1></div>
+          <div id="baseStats" class="baseStats d_none">
+            <div class="chart-container" style="position: relative; height:30vh; width:90%">
+              <canvas id="myChart"></canvas>
+            </div>
+          </div>
           <div id="evolution" class="d_none"><h1>Evolution!!!</h1></div>
           <div id="moves" class="d_none"></div>
         </div>

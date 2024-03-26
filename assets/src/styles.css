@@ -30,7 +30,7 @@ body {
   background-position-x: 110%;
   background-position-y: 120%;
   background-repeat: no-repeat;
-  cursor: pointer;
+  cursor: pointer; 
 }
 
 .pokemonCard:hover{

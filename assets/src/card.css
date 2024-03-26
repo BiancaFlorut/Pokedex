@@ -12,7 +12,6 @@
 
 .card {
   max-width: 600px;
-  width: 50%;
   background-color: rgb(192, 191, 191);
   position: relative;
   top: 50%;
@@ -153,9 +152,29 @@ td {
     gap: 4px;
 }
 
+
 .flex_1 {
   flex: 1;
   min-height: 20vh;
+}
+
+.baseStats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.chart-container {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.d_none {
+  display: none;
 }
 
 @media (max-width: 900px) {

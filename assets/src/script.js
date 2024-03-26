@@ -7,7 +7,7 @@ let results = [];
 let searchCount = 0;
 let menu = false;
 let language = null;
-let totalNumberOfPokemons = 10277;
+let totalNumberOfPokemons;
 
 // eslint-disable-next-line no-unused-vars
 async function init() {
@@ -32,6 +32,7 @@ async function loadPokemons(url) {
     let [pokemonsJSON, err] = await resolve(response.json());
     if (pokemonsJSON) {
       nextUrl = pokemonsJSON.next;
+      totalNumberOfPokemons = pokemonsJSON.count;
       let [array, err] = await resolve(cachePokemons(pokemonsJSON));
       renderPokemons(array, err);
     }
@@ -107,27 +108,31 @@ async function getPokeInfos(url) {
   let result;
   let response = await fetch(url);
   let pokemonsJSON = await response.json();
-  let imageURL = pokemonsJSON["sprites"]["other"]["official-artwork"]["front_default"];
-  let height = (pokemonsJSON.height / 10).toFixed(2);
-  let weight = (pokemonsJSON.weight / 10).toFixed(2);
   let abilities = [];
-  pokemonsJSON.abilities.forEach((ability) => abilities.push({ ability: ability.ability.name, url: ability.ability.url}));
-  let id = pokemonsJSON.id;
+  pokemonsJSON.abilities.forEach((ability) => abilities.push({ ability: ability.ability.name, url: ability.ability.url }));
   let typesJSON = pokemonsJSON["types"];
   let types = [];
   for (let i = 0; i < typesJSON.length; i++) {
     const element = typesJSON[i].type.name;
     types.push(element);
   }
+  let hp = pokemonsJSON.stats.find((stat) => stat.stat.name === "hp");
+  let attack = pokemonsJSON.stats.find((stat) => stat.stat.name === "attack");
+  let defense = pokemonsJSON.stats.find((stat) => stat.stat.name === "defense");
+  let sp_attack = pokemonsJSON.stats.find((stat) => stat.stat.name === "special-attack");
+  let sp_defense = pokemonsJSON.stats.find((stat) => stat.stat.name === "special-defense");
+  let speed = pokemonsJSON.stats.find((stat) => stat.stat.name === "speed");
+
   result = {
-    image: imageURL,
+    image: pokemonsJSON["sprites"]["other"]["official-artwork"]["front_default"],
     types: types,
-    id: id,
-    height: height,
-    weight: weight,
+    id: pokemonsJSON.id,
+    height: (pokemonsJSON.height / 10).toFixed(2),
+    weight: (pokemonsJSON.weight / 10).toFixed(2),
     abilities: abilities,
     name: pokemonsJSON.name,
-    speciesURL: pokemonsJSON.species.url
+    speciesURL: pokemonsJSON.species.url,
+    stats: { hp: hp.base_stat, attack: attack.base_stat, defense: defense.base_stat, sp_attack: sp_attack.base_stat, sp_defense: sp_defense.base_stat, speed: speed.base_stat },
   };
   return result;
 }
@@ -205,7 +210,7 @@ async function openCard(id) {
   document.getElementById("dialog_bg").classList.remove("d_none");
   document.getElementById("dialog_bg").style.top = `${window.scrollY}px`;
   document.body.style.overflow = "hidden";
-  document.getElementById('top_area').setAttribute('class', 'background_image');
+  document.getElementById("top_area").setAttribute("class", "background_image");
   loadPokemonCard(id);
 }
 
@@ -222,14 +227,36 @@ async function loadPokemonCard(id) {
     return;
   }
   checkAvailability(id);
-  document.getElementById("backImg").setAttribute("onclick", `openCard(${id - 1})`);
-  document.getElementById("nextImg").setAttribute("onclick", `openCard(${id + 1})`);
-  let formatId = actualPokemon.infos.id.toString().padStart(5, "0");
-  document.getElementById("top_area").classList.add(actualPokemon.infos.types[0]);
-  document.getElementById("type_area").innerHTML = getPokemonTypesHTML(actualPokemon.infos.types);
-  document.getElementById("id_area").innerHTML = `#${formatId}`;
-  document.getElementById("pokemonImage").src = `${actualPokemon.infos.image}`;
+  loadTopCardInfo(actualPokemon);
   loadAbout(actualPokemon);
+  let data = loadChartData(actualPokemon);
+  // eslint-disable-next-line no-undef
+  destroyChart();
+  // eslint-disable-next-line no-undef
+  showChart(data);
+}
+
+function loadChartData(pokemon) {
+  const stats = pokemon.infos.stats;
+  return {
+    labels: ["HP", "Attack", "Defense", "Sp. Attack", "Sp. Defense", "Speed"],
+    datasets: [
+      {
+        data: [stats.hp, stats.attack, stats.defense, stats.sp_attack, stats.sp_defense, stats.speed],
+        backgroundColor: ["rgba(205, 65, 65, 1)", "rgba(65, 205, 65, 1)", "rgba(205, 65, 65, 1)", "rgba(65, 205, 65, 1)", "rgba(65, 205, 65, 1)", "rgba(205, 65, 65, 1)", "rgba(65, 205, 65, 1)"],
+        borderWidth: 0,
+        barPercentage: 0.2,
+      },
+    ],
+  };
+}
+
+function loadTopCardInfo(pokemon) {
+  let formatId = pokemon.infos.id.toString().padStart(5, "0");
+  document.getElementById("top_area").classList.add(pokemon.infos.types[0]);
+  document.getElementById("type_area").innerHTML = getPokemonTypesHTML(pokemon.infos.types);
+  document.getElementById("id_area").innerHTML = `#${formatId}`;
+  document.getElementById("pokemonImage").src = `${pokemon.infos.image}`;
 }
 
 function checkAvailability(id) {
@@ -243,6 +270,8 @@ function checkAvailability(id) {
   } else {
     document.getElementById("nextImg").classList.remove("d_none");
   }
+  document.getElementById("backImg").setAttribute("onclick", `openCard(${id - 1})`);
+  document.getElementById("nextImg").setAttribute("onclick", `openCard(${id + 1})`);
 }
 
 async function getPokemonFromApi(id) {
@@ -250,7 +279,6 @@ async function getPokemonFromApi(id) {
   pokemon.infos.url = "https://pokeapi.co/api/v2/pokemon/" + id;
   pokemon.infos = await getPokeInfos(pokemon.infos.url);
   pokemon.name = capitalizeFirstLetter(pokemon.infos.name);
-  //pokemon = await getSpeciesNameBreeding(pokemon);
   return pokemon;
 }
 
@@ -375,7 +403,6 @@ async function searchNext(url, search) {
 // eslint-disable-next-line no-unused-vars
 function openMenu() {
   let element = document.getElementById("menuList");
-  if (window.innerWidth <= 670) {
     if (menu) {
       element.classList.add("d_none");
       menu = false;
@@ -383,5 +410,4 @@ function openMenu() {
       element.classList.remove("d_none");
       menu = true;
     }
-  }
 }
