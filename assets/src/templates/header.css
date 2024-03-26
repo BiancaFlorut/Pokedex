@@ -103,6 +103,16 @@ input:focus {
   margin-bottom: 32px;
 }
 
+.lang_link {
+  cursor: pointer;
+  color: gray;
+}
+
+.active_link {
+  color: darkblue;
+  cursor: auto;
+}
+
 .d_none {
   display: none;
 }

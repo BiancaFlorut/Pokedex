@@ -34,8 +34,8 @@ body {
 }
 
 .pokemonCard:hover{
-  box-shadow: 0 0 10px rgba(128, 128, 128, 0.534);
-  filter: brightness(105%);
+  box-shadow: 0 0 10px rgba(94, 93, 93, 0.534);
+  filter: brightness(110%);
 }
 
 .image {

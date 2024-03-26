@@ -6,12 +6,24 @@ let nextPokemons = [];
 let results = [];
 let searchCount = 0;
 let menu = false;
+let language = null;
+let totalNumberOfPokemons = 10277;
 
 // eslint-disable-next-line no-unused-vars
-function init() {
+async function init() {
   // eslint-disable-next-line no-undef
-  includeHTML();
+  await includeHTML();
+  setLanguage("de");
+  openMenu();
   loadPokemons(URL_API);
+}
+
+// eslint-disable-next-line no-unused-vars
+function setLanguage(lang) {
+  if (language) document.getElementById(language).classList.remove("active_link");
+  language = lang;
+  document.getElementById(lang).classList.add("active_link");
+  openMenu();
 }
 
 async function loadPokemons(url) {
@@ -99,7 +111,7 @@ async function getPokeInfos(url) {
   let height = (pokemonsJSON.height / 10).toFixed(2);
   let weight = (pokemonsJSON.weight / 10).toFixed(2);
   let abilities = [];
-  pokemonsJSON.abilities.forEach((ability) => abilities.push(ability.ability.name));
+  pokemonsJSON.abilities.forEach((ability) => abilities.push({ ability: ability.ability.name, url: ability.ability.url}));
   let id = pokemonsJSON.id;
   let typesJSON = pokemonsJSON["types"];
   let types = [];
@@ -107,18 +119,60 @@ async function getPokeInfos(url) {
     const element = typesJSON[i].type.name;
     types.push(element);
   }
-  result = { image: imageURL, types: types, id: id, height: height, weight: weight, abilities: abilities };
+  result = {
+    image: imageURL,
+    types: types,
+    id: id,
+    height: height,
+    weight: weight,
+    abilities: abilities,
+    name: pokemonsJSON.name,
+    speciesURL: pokemonsJSON.species.url
+  };
   return result;
 }
 
-async function getMoreInfos(pokemon) {
-  let response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.infos.id}`);
-  let pokeJSON = await response.json();
-  let species = pokeJSON.genera.find((genus) => genus.language.name === "de").genus;
-  let name = pokeJSON.names.find((name) => name.language.name === "de").name;
-  pokemon.infos.species = species;
-  pokemon.name = name;
+async function getSpeciesNameBreeding(pokemon) {
+  let response = null;
+  try {
+    response = await fetch(pokemon.infos.speciesURL);
+    if (response.ok) {
+      let pokeJSON = await response.json();
+      let species = pokeJSON.genera.find((genus) => genus.language.name === language).genus;
+      let name = pokeJSON.names.find((name) => name.language.name === language).name;
+      pokemon.infos.species = species;
+      pokemon.name = name;
+      let [genderRatio, eggGroup, eggCycle] = getGenderEggGroupEggCycle(pokeJSON);
+      setEggGroups(genderRatio, eggGroup, eggCycle);
+    } else {
+      console.log("cannot find species for the pokemon with id:", pokemon.infos.id);
+    }
+  } catch {
+    console.log("cannot fetch pokemon with id:", pokemon.infos.id);
+  }
   return pokemon;
+}
+
+function getGenderEggGroupEggCycle(json) {
+  const genderRate = json.gender_rate;
+  let genderRatio;
+  switch (genderRate) {
+    case -1:
+      genderRatio = "Geschlechtslos";
+      break;
+    case 0:
+      genderRatio = /*html*/ `<img src="../assets/icons/male.png" alt="">100%`;
+      break;
+    case 8:
+      genderRatio = /*html*/ `<img src="../assets/icons/male.png" alt="">87.5% <img src="../assets/icons/female.png" alt=""> 12.5%`;
+      break;
+    default:
+      genderRatio = `<img src="../assets/icons/male.png" alt="">${(genderRate / 8) * 100}% ,<img src="../assets/icons/female.png" alt="female"> ${100 - (genderRate / 8) * 100}% `;
+      break;
+  }
+  let eggGroup = json.egg_groups.map((eggGroup) => eggGroup.url);
+  let eggCycle = Math.ceil((json.hatch_counter + 1) / 5);
+  return [genderRatio, eggGroup, eggCycle];
 }
 
 function capitalizeFirstLetter(string) {
@@ -151,42 +205,79 @@ async function openCard(id) {
   document.getElementById("dialog_bg").classList.remove("d_none");
   document.getElementById("dialog_bg").style.top = `${window.scrollY}px`;
   document.body.style.overflow = "hidden";
+  document.getElementById('top_area').setAttribute('class', 'background_image');
+  loadPokemonCard(id);
+}
+
+async function loadPokemonCard(id) {
   let actualPokemon;
   pokemons.forEach((pokemon) => {
     if (pokemon.infos.id == id) actualPokemon = pokemon;
   });
-  if (actualPokemon) {
-    let formatId = actualPokemon.infos.id.toString().padStart(3, "0");
-    document.getElementById("top_area").classList.add(actualPokemon.infos.types[0]);
-    document.getElementById("type_area").innerHTML = getPokemonTypesHTML(actualPokemon.infos.types);
-    document.getElementById("id_area").innerHTML = `#${formatId}`;
-    document.getElementById("pokemonImage").src = `${actualPokemon.infos.image}`;
-    loadAbout(actualPokemon);
-    let [gender, eggGroups, eggCycle] = await getGenderEggGroupEggCycle(id);
-    document.getElementById('gender').innerHTML = gender;
-    document.getElementById('eggGroup').innerHTML = '';
-    let spacing = ", ";
-    for (let i = 0; i < eggGroups.length; i++) {
-      const eggGroupURL = eggGroups[i];
-      let group = await renderEggGroup(eggGroupURL);
-      if (i + 1 == eggGroups.length) {
-        spacing = "";
-      }
-      document.getElementById('eggGroup').innerHTML += group + spacing;
-    }
-    document.getElementById('eggCycle').innerHTML = eggCycle;
+  if (!actualPokemon) {
+    actualPokemon = await getPokemonFromApi(id);
+  }
+  if (!actualPokemon) {
+    console.log("The Pokemon with id:" + id + " does not exist!");
+    return;
+  }
+  checkAvailability(id);
+  document.getElementById("backImg").setAttribute("onclick", `openCard(${id - 1})`);
+  document.getElementById("nextImg").setAttribute("onclick", `openCard(${id + 1})`);
+  let formatId = actualPokemon.infos.id.toString().padStart(5, "0");
+  document.getElementById("top_area").classList.add(actualPokemon.infos.types[0]);
+  document.getElementById("type_area").innerHTML = getPokemonTypesHTML(actualPokemon.infos.types);
+  document.getElementById("id_area").innerHTML = `#${formatId}`;
+  document.getElementById("pokemonImage").src = `${actualPokemon.infos.image}`;
+  loadAbout(actualPokemon);
+}
+
+function checkAvailability(id) {
+  if (id - 1 == 0) {
+    document.getElementById("backImg").classList.add("d_none");
+  } else {
+    document.getElementById("backImg").classList.remove("d_none");
+  }
+  if (id + 1 >= totalNumberOfPokemons) {
+    document.getElementById("nextImg").classList.add("d_none");
+  } else {
+    document.getElementById("nextImg").classList.remove("d_none");
   }
 }
 
-async function renderEggGroup(eggGroupUrl){
+async function getPokemonFromApi(id) {
+  let pokemon = { infos: { id: id } };
+  pokemon.infos.url = "https://pokeapi.co/api/v2/pokemon/" + id;
+  pokemon.infos = await getPokeInfos(pokemon.infos.url);
+  pokemon.name = capitalizeFirstLetter(pokemon.infos.name);
+  //pokemon = await getSpeciesNameBreeding(pokemon);
+  return pokemon;
+}
+
+async function setEggGroups(gender, eggGroups, eggCycle) {
+  document.getElementById("gender").innerHTML = gender;
+  document.getElementById("eggGroup").innerHTML = "";
+  let spacing = ", ";
+  for (let i = 0; i < eggGroups.length; i++) {
+    const eggGroupURL = eggGroups[i];
+    let group = await renderEggGroup(eggGroupURL);
+    if (i + 1 == eggGroups.length) {
+      spacing = "";
+    }
+    document.getElementById("eggGroup").innerHTML += group + spacing;
+  }
+  document.getElementById("eggCycle").innerHTML = eggCycle;
+}
+
+async function renderEggGroup(eggGroupUrl) {
   let response = await fetch(eggGroupUrl);
   let json = await response.json();
-  let nameDe = json.names.find(name => name.language.name === 'de').name;
+  let nameDe = json.names.find((name) => name.language.name === language).name;
   return nameDe;
 }
 
 async function loadAbout(pokemon) {
-  let poke = await getMoreInfos(pokemon);
+  let poke = await getSpeciesNameBreeding(pokemon);
   document.getElementById("pokeName").innerHTML = poke.name;
   document.getElementById("species").innerHTML = poke.infos.species;
   document.getElementById("height").innerHTML = `${pokemon.infos.height} m`;
@@ -195,44 +286,19 @@ async function loadAbout(pokemon) {
   let spacing = ", ";
   for (let i = 0; i < pokemon.infos.abilities.length; i++) {
     let ability = pokemon.infos.abilities[i];
-    let abilityDe = await getAbility(ability);
+    let abilityLanguage = await getAbility(ability);
     if (i + 1 == pokemon.infos.abilities.length) {
       spacing = "";
     }
-    document.getElementById("abilities").innerHTML += capitalizeFirstLetter(abilityDe) + spacing;
+    document.getElementById("abilities").innerHTML += capitalizeFirstLetter(abilityLanguage) + spacing;
   }
 }
 
 async function getAbility(ability) {
-  let response = await fetch("https://pokeapi.co/api/v2/ability/" + ability);
+  let response = await fetch(ability.url);
   let json = await response.json();
-  let abilityDe = json.names.find((name) => name.language.name === "de").name;
-  return abilityDe;
-}
-
-async function getGenderEggGroupEggCycle(id) {
-  let response = await fetch("https://pokeapi.co/api/v2/pokemon-species/" + id);
-  let json = await response.json();
-  console.log(json);
-  const genderRate = json.gender_rate;
-  let genderRatio;
-  switch (genderRate) {
-    case -1:
-      genderRatio = "Geschlechtslos";
-      break;
-    case 0:
-      genderRatio = /*html*/`<img src="../assets/icons/male.png" alt="">100%`;
-      break;
-    case 8:
-      genderRatio = /*html*/`<img src="../assets/icons/male.png" alt="">87.5% <img src="../assets/icons/female.png" alt=""> 12.5%`;
-      break;
-    default:
-      genderRatio = `<img src="../assets/icons/male.png" alt="">${(genderRate / 8) * 100}% ,<img src="../assets/icons/female.png" alt="female"> ${100 - (genderRate / 8) * 100}% `;
-      break;
-  }
-  let eggGroup = json.egg_groups.map(eggGroup => eggGroup.url);
-  let eggCycle = Math.ceil((json.hatch_counter + 1) / 5);
-  return [genderRatio, eggGroup, eggCycle];
+  let abilityLanguage = json.names.find((name) => name.language.name === language).name;
+  return abilityLanguage;
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -257,7 +323,6 @@ function getPokemonTypesHTML(types) {
 async function search(url, id) {
   searchCount = 0;
   let searchValue = document.getElementById(`${id}`).value.trim().toLowerCase();
-  console.log(searchValue);
   if (searchValue.length >= 3) {
     results = [];
     document.getElementById("pokemonCards").innerHTML = "";
@@ -294,7 +359,7 @@ async function checkMatch(json, search) {
 
 async function searchNext(url, search) {
   if (!url) {
-    console.log("end search");
+    console.log("end next search");
     return;
   }
   let response = await fetch(url);
