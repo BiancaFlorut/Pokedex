@@ -59,7 +59,7 @@ async function renderPokemons(array, err) {
 }
 
 async function renderNextPokemons() {
-  nextPokemons.forEach((pokemon, index) => renderPokemonCard(pokemon, index));
+  nextPokemons.forEach((pokemon, index) => renderPokemonCard(pokemon, pokemons.length + index));
   pokemons = pokemons.concat(nextPokemons);
   await loadNextPokemons(nextUrl);
 }
@@ -253,6 +253,8 @@ function loadChartData(pokemon) {
         backgroundColor: ["rgba(205, 65, 65, 1)", "rgba(65, 205, 65, 1)", "rgba(205, 65, 65, 1)", "rgba(65, 205, 65, 1)", "rgba(65, 205, 65, 1)", "rgba(205, 65, 65, 1)", "rgba(65, 205, 65, 1)"],
         borderWidth: 0,
         barPercentage: 0.2,
+        categoryPercentage: 0.9,
+        borderRadius: 5,
       },
     ],
   };
@@ -366,19 +368,17 @@ function getPokemonTypesHTML(types) {
 let currentSearchedPokemonIndex;
 
 // eslint-disable-next-line no-unused-vars
-async function search(url, id) {
+function search(id) {
+  if (searching) {
+    //stop searching
+    searching = false;
+  }
   searchCount = 0;
   currentSearchedPokemonIndex = 0;
-  searching = true;
   let searchValue = document.getElementById(`${id}`).value.trim().toLowerCase();
   if (searchValue.length >= 3) {
-    results = [];
-    document.getElementById("pokemonCards").innerHTML = "";
-    window.onscroll = "";
-    let response = await fetch(url);
-    let pokeListJson = await response.json();
-    await checkMatch(pokeListJson, searchValue);
-    await searchNext(pokeListJson.next, searchValue);
+    searching = true;
+    searchPokemons(searchValue);
   }
   if (searchValue.length == 0) {
     searching = false;
@@ -388,6 +388,17 @@ async function search(url, id) {
       if (isScrolledToBottom()) renderNextPokemons();
     };
   }
+}
+
+async function searchPokemons(searchValue) {
+  results = [];
+  let url = "https://pokeapi.co/api/v2/pokemon/";
+  document.getElementById("pokemonCards").innerHTML = "";
+  window.onscroll = "";
+  let response = await fetch(url);
+  let pokeListJson = await response.json();
+  await checkMatch(pokeListJson, searchValue);
+  await searchNext(pokeListJson.next, searchValue);
 }
 
 async function checkMatch(json, search) {
@@ -402,8 +413,9 @@ async function checkMatch(json, search) {
   if (searchCount > 0) {
     let array = await cachePokemons({ results: resultsMatch });
     array.forEach((pokemon) => {
-      renderPokemonCard(pokemon, currentSearchedPokemonIndex)
-      currentSearchedPokemonIndex++;});
+      renderPokemonCard(pokemon, currentSearchedPokemonIndex);
+      currentSearchedPokemonIndex++;
+    });
   }
   return resultsMatch;
 }
@@ -412,7 +424,7 @@ async function searchNext(url, search) {
   let response = await fetch(url);
   let pokeListJson = await response.json();
   results = results.concat(await checkMatch(pokeListJson, search));
-  if (!pokeListJson.next) {
+  if (!pokeListJson.next || !searching) {
     console.log("end search");
     return;
   }
@@ -422,11 +434,14 @@ async function searchNext(url, search) {
 // eslint-disable-next-line no-unused-vars
 function openMenu() {
   let element = document.getElementById("menuList");
+  let button = document.getElementById("menuIcon");
   if (menu) {
     element.classList.add("d_none");
+    button.style.backgroundColor = "#f6f6f6";
     menu = false;
   } else {
     element.classList.remove("d_none");
+    button.style.backgroundColor = "#c2c2c2";
     menu = true;
   }
 }

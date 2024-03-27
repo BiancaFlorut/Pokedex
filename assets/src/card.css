@@ -142,16 +142,15 @@ td {
   padding: 12px 0;
 }
 
-#gender img{
-    height: 16px;
+#gender img {
+  height: 16px;
 }
 
 #gender {
-    display: flex;
-    align-items: center;
-    gap: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
-
 
 .flex_1 {
   flex: 1;
@@ -166,11 +165,14 @@ td {
   height: 100%;
 }
 
-.chart-container {
+.chart_container {
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  height: 30vh;
+  width: 100%;
 }
 
 .d_none {

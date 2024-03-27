@@ -6,11 +6,11 @@
     <div class="header_content">
       <a class="header_name" href="../../../index.html"><h1>Pokédex</h1></a>
       <div id="menuItems" class="menu_items">
-          <input id="searchInput" type="text" placeholder="pikachu" onkeyup="search('https://pokeapi.co/api/v2/pokemon/','searchInput')">
+          <input id="searchInput" type="text" placeholder="pikachu" onkeyup="search('searchInput')">
           <a href="../../../assets/src/credits.html">Credits</a>
       </div>
       <div class="mobile_menu">
-        <div class="menu_icon">
+        <div id="menuIcon" class="menu_icon">
           <img src="../../../assets/icons/menu.png" alt="menu" onclick="openMenu()" />
         </div>
         <div id="menuList" class="mobile_menu_list d_none">
@@ -21,7 +21,7 @@
       </div>
     </div>
     <div id="mobileSearch" class="mobile_search">
-      <input id="mobileSearchInput" type="text" placeholder="pikachu" onkeyup="search('https://pokeapi.co/api/v2/pokemon/', 'mobileSearchInput')">
+      <input id="mobileSearchInput" type="text" placeholder="pikachu" onkeyup="search('mobileSearchInput')">
     </div>
   </header>
   
