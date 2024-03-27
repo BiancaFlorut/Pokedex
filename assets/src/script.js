@@ -231,12 +231,6 @@ async function loadPokemonCard(id) {
   } else {
     actualPokemon = pokemons[id];
   }
-  // pokemons.forEach((pokemon) => {
-  //   if (pokemon.infos.id == id) actualPokemon = pokemon;
-  // });
-  // if (!actualPokemon) {
-  //   actualPokemon = await getPokemonFromApi(id);
-  // }
   if (!actualPokemon) {
     console.log("The Pokemon with id:" + id + " does not exist!");
     return;
@@ -373,10 +367,19 @@ function getPokemonTypesHTML(types) {
   return typesHTML;
 }
 
+let timer;
+// eslint-disable-next-line no-unused-vars
+ function validate(id) {
+  clearTimeout(timer);
+   timer= setTimeout(search,1000, id);
+   console.log('waiting ', timer);
+}
+
 let currentSearchedPokemonIndex;
 
-// eslint-disable-next-line no-unused-vars
 function search(id) {
+  console.log('searching');
+  document.getElementById("pokemonCards").innerHTML = "";
   if (searching) {
     //stop searching
     searching = false;
@@ -390,7 +393,7 @@ function search(id) {
   }
   if (searchValue.length == 0) {
     searching = false;
-    document.getElementById("pokemonCards").innerHTML = "";
+    
     pokemons.forEach((pokemon, index) => renderPokemonCard(pokemon, index));
     window.onscroll = async function () {
       if (isScrolledToBottom()) {
@@ -407,7 +410,7 @@ async function searchPokemons(searchValue) {
   window.onscroll = "";
   let response = await fetch(url);
   let pokeListJson = await response.json();
-  await checkMatch(pokeListJson, searchValue);
+  results = results.concat(await checkMatch(pokeListJson, searchValue));
   await searchNext(pokeListJson.next, searchValue);
 }
 
