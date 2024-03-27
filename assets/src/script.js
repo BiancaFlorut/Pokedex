@@ -49,8 +49,10 @@ async function renderPokemons(array, err) {
     pokemons = pokemons.concat(array);
     pokemons.forEach((pokemon, index) => renderPokemonCard(pokemon, index));
     await loadNextPokemons(nextUrl);
-    window.onscroll = function () {
-      if (isScrolledToBottom()) renderNextPokemons();
+    window.onscroll = async function () {
+      if (isScrolledToBottom()) {
+        await renderNextPokemons();
+      }
     };
   }
   if (err) {
@@ -59,9 +61,15 @@ async function renderPokemons(array, err) {
 }
 
 async function renderNextPokemons() {
+  window.onscroll = '';
   nextPokemons.forEach((pokemon, index) => renderPokemonCard(pokemon, pokemons.length + index));
   pokemons = pokemons.concat(nextPokemons);
   await loadNextPokemons(nextUrl);
+  window.onscroll = async function () {
+    if (isScrolledToBottom()) {
+      await renderNextPokemons();
+    }
+  };
 }
 
 function isScrolledToBottom() {
@@ -384,8 +392,10 @@ function search(id) {
     searching = false;
     document.getElementById("pokemonCards").innerHTML = "";
     pokemons.forEach((pokemon, index) => renderPokemonCard(pokemon, index));
-    window.onscroll = function () {
-      if (isScrolledToBottom()) renderNextPokemons();
+    window.onscroll = async function () {
+      if (isScrolledToBottom()) {
+        await renderNextPokemons();
+      }
     };
   }
 }
