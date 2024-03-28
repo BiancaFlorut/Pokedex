@@ -6,6 +6,7 @@ let nextPokemons = [];
 let results = [];
 let language = null;
 let searching = false;
+let loading = 0;
 
 
 async function init() {
@@ -69,13 +70,14 @@ async function renderNextPokemons() {
 }
 
 function isScrolledToBottom() {
-  return window.scrollY + window.innerHeight >= document.body.offsetHeight;
+  return (window.scrollY  + document.body.offsetHeight) >= document.body.scrollHeight;
 }
 
 async function loadNextPokemons(url) {
   let response = await fetch(url);
   nextPokeJson = await response.json();
   nextUrl = nextPokeJson.next;
+  setLoading(0);
   nextPokemons = await cachePokemons(nextPokeJson);
 }
 
@@ -90,7 +92,10 @@ async function resolve(p) {
 
 async function cachePokemons(pokemonsJSON) {
   let array = [];
+  
   for (let i = 0; i < pokemonsJSON.results.length; i++) {
+    let step = (i+1) * 100 /(pokemonsJSON.results.length ) ;
+    setLoading(step);
     const pokemonsJson = pokemonsJSON.results[i];
     let [infos, err] = await resolve(getPokeInfos(pokemonsJson.url));
     if (infos) {
@@ -118,6 +123,7 @@ async function getPokeInfos(url) {
     types.push(element);
   }
   let hp = pokemonsJSON.stats.find((stat) => stat.stat.name === "hp");
+  
   let attack = pokemonsJSON.stats.find((stat) => stat.stat.name === "attack");
   let defense = pokemonsJSON.stats.find((stat) => stat.stat.name === "defense");
   let sp_attack = pokemonsJSON.stats.find((stat) => stat.stat.name === "special-attack");
@@ -136,6 +142,10 @@ async function getPokeInfos(url) {
     stats: { hp: hp.base_stat, attack: attack.base_stat, defense: defense.base_stat, sp_attack: sp_attack.base_stat, sp_defense: sp_defense.base_stat, speed: speed.base_stat },
   };
   return result;
+}
+
+function getLangName(){
+
 }
 
 async function getSpeciesNameBreeding(pokemon) {

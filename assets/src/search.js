@@ -1,6 +1,8 @@
 let searchCount = 0;
 let menu = false;
 let timer;
+let step = 20;
+let totalNumberOfPokemons;
 
 // eslint-disable-next-line no-unused-vars
  function validate(id) {
@@ -25,6 +27,7 @@ function search(id) {
   let searchValue = document.getElementById(`${id}`).value.trim().toLowerCase();
   if (searchValue.length >= 3) {
     console.log('start searching for ', searchValue);
+    step = 20;
     searching = true;
     abortSearch();
     setNewController();
@@ -56,6 +59,10 @@ async function searchPokemons(searchValue) {
   window.onscroll = "";
   let response = await fetch(url, {signal});
   let pokeListJson = await response.json();
+  totalNumberOfPokemons = pokeListJson.count;
+  let progress = step * 100 / totalNumberOfPokemons;
+  setLoading(progress);
+  step = step + pokeListJson.results.length;
   results = results.concat(await checkMatch(pokeListJson, searchValue));
   await searchNext(pokeListJson.next, searchValue);
 }
@@ -81,7 +88,10 @@ async function checkMatch(json, search) {
 
 async function searchNext(url, search) {
   let response = await fetch(url, {signal});
+  let progress = step * 100 / totalNumberOfPokemons;
+  setLoading(progress);
   let pokeListJson = await response.json();
+  step = step + pokeListJson.results.length;
   results = results.concat(await checkMatch(pokeListJson, search));
   if (!pokeListJson.next || !searching) {
     console.log("end search for: " + search);
@@ -102,4 +112,9 @@ function openMenu() {
     button.style.backgroundColor = "#c2c2c2";
     menu = true;
   }
+}
+
+function setLoading(value) {
+  if (value > 100) value = 100;
+  document.getElementById('loadingValue').style.width = value + '%';
 }

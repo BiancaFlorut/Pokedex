@@ -16,7 +16,17 @@
   </head>
   <body onload="init()">
     <div class="header_template" w3-include-html=".\assets\src\templates\header.html"></div>
-    <div id="pokemonCards"></div>
+    
+    <div class="cards_container">
+      <div class="flex_1">
+        <div id="pokemonCards"></div>
+      </div>
+      <div class="loading_bar">
+        <div class="loading_container" >
+          <div id="loadingValue" class="loading_status"></div>
+        </div>
+      </div>
+    </div>
     <div id="dialog_bg" class="dialog_bg d_none" onclick="closeDialog()">
       <div id="pokemonCard" class="card" onclick="stopPropagation(event)">
         <div id="top_area" class="background_image">

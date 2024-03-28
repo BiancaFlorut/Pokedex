@@ -8,6 +8,15 @@ html {
 body {
   margin: 0;
   font-family: "Open Sans";
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cards_container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 #pokemonCards {
@@ -16,6 +25,7 @@ body {
   justify-content: center;
   gap: 16px;
   padding: 16px;
+  flex: 1;
 }
 
 .pokemonCard {
@@ -152,4 +162,18 @@ body {
   font-size: 32px;
   font-weight: 900;
   color: rgba(255, 255, 255, 0.219);
+}
+
+.loading_bar {
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+}
+
+.loading_status {
+  background: linear-gradient(39deg, rgba(228,255,0,1) 0%, rgba(41,243,241,1) 22%, rgba(121,123,159,1) 51%, rgba(173,98,171,1) 77%, rgba(199,36,39,1) 100%);
+  width: 50%;
+  height: 8px;
+  border-radius: 4px;
 }

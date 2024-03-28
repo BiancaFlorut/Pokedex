@@ -6,12 +6,10 @@ const menuItems = [
 ];
 let chart;
 
-// eslint-disable-next-line no-unused-vars
 function stopPropagation(event) {
   event.stopPropagation();
 }
 
-// eslint-disable-next-line no-unused-vars
 function toggleMenu(index, event) {
   event.stopPropagation();
   resetMenu();
@@ -30,7 +28,6 @@ function resetMenu() {
   document.getElementById("evolution").classList.add("d_none");
   document.getElementById("moves").classList.add("d_none");
 }
-
 
 function showChart(data) {
   const ctx = document.getElementById("myChart");
@@ -93,6 +90,7 @@ function showChart(data) {
             display: false,
           },
           ticks: { display: false },
+          max: 255,
         },
         y: {
           beginAtZero: true,
