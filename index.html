@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="./assets/icons/pokeball.png" type="image/x-icon" />
     <script src="./assets/src/includeHTML.js"></script>
     <script src="./assets/src/script.js"></script>
+    <script src="./assets/src/search.js"></script>
     <script src="./assets/src/cardMenu.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Pokédex</title>
@@ -39,34 +40,34 @@
         </div>
         <div class="bottom_area">
           <div class="stats_nav">
-            <div id="aboutMenuItem" class="stats_menu_item active" onclick="toggleMenu(0,event)"">About</div>
-            <div id="baseStatsMenuItem" class="stats_menu_item" onclick="toggleMenu(1,event)">Base Stats</div>
+            <div id="aboutMenuItem" class="stats_menu_item" onclick="toggleMenu(0,event)"">About</div>
+            <div id="baseStatsMenuItem" class="stats_menu_item active" onclick="toggleMenu(1,event)">Base Stats</div>
             <div id="evolutionMenuItem" class="stats_menu_item" onclick="toggleMenu(2,event)">Evolution</div>
             <div id="movesMenuItem" class="stats_menu_item" onclick="toggleMenu(3,event)">Moves</div>
           </div>
-          <div id="about">
+          <div id="about" class="d_none">
             <table>
               <tr>
-                <th>Spezies</th>
+                <th>Species</th>
                 <td id="species"></td>
               </tr>
               <tr>
-                <th>Größe</th>
+                <th>Height</th>
                 <td id="height"></td>
               </tr>
               <tr>
-                <th>Gewicht</th>
+                <th>Weight</th>
                 <td id="weight"></td>
               </tr>
               <tr>
-                <th>Fähigkeiten</th>
+                <th>Abilities</th>
                 <td id="abilities"></td>
               </tr>
             </table>
-            <div class="header_stats">Fortpflanzung</div>
+            <div class="header_stats">Breeding</div>
             <table>
               <tr>
-                <th>Geschlecht</th>
+                <th>Gender</th>
                 <td id="gender"></td>
               </tr>
               <tr>
@@ -79,7 +80,7 @@
               </tr>
             </table>
           </div>
-          <div id="baseStats" class="baseStats d_none">
+          <div id="baseStats" class="baseStats">
             <div class="chart_container">
               <canvas id="myChart"></canvas>
             </div>
