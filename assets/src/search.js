@@ -1,4 +1,7 @@
+let searchCount = 0;
+let menu = false;
 let timer;
+
 // eslint-disable-next-line no-unused-vars
  function validate(id) {
   clearTimeout(timer);
@@ -87,7 +90,6 @@ async function searchNext(url, search) {
   searchNext(pokeListJson.next, search);
 }
 
-// eslint-disable-next-line no-unused-vars
 function openMenu() {
   let element = document.getElementById("menuList");
   let button = document.getElementById("menuIcon");

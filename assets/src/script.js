@@ -4,21 +4,17 @@ let pokemons = [];
 let nextPokeJson;
 let nextPokemons = [];
 let results = [];
-let searchCount = 0;
-let menu = false;
 let language = null;
 let searching = false;
 
-// eslint-disable-next-line no-unused-vars
+
 async function init() {
-  // eslint-disable-next-line no-undef
   await includeHTML();
   setLanguage("de");
   openMenu();
   loadPokemons(URL_API);
 }
-
-// eslint-disable-next-line no-unused-vars
+ 
 function setLanguage(lang) {
   if (language) document.getElementById(language).classList.remove("active_link");
   language = lang;
@@ -210,7 +206,6 @@ function renderPokemonCard(pokemon, index) {
     `;
 }
 
-// eslint-disable-next-line no-unused-vars
 async function openCard(id) {
   if (id != -1) {
     document.getElementById("dialog_bg").classList.remove("d_none");
@@ -239,9 +234,7 @@ async function loadPokemonCard(id) {
   loadTopCardInfo(actualPokemon);
   loadAbout(actualPokemon);
   let data = loadChartData(actualPokemon);
-  // eslint-disable-next-line no-undef
   destroyChart();
-  // eslint-disable-next-line no-undef
   showChart(data);
 }
 
@@ -366,4 +359,3 @@ function getPokemonTypesHTML(types) {
   }
   return typesHTML;
 }
-

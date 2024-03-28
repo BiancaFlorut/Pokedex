@@ -31,20 +31,16 @@ function resetMenu() {
   document.getElementById("moves").classList.add("d_none");
 }
 
-// eslint-disable-next-line no-unused-vars
+
 function showChart(data) {
   const ctx = document.getElementById("myChart");
   const progressBar = {
     id: "progressBar",
-    // eslint-disable-next-line no-unused-vars
     beforeDatasetsDraw(chart, args, pluginOptions) {
-      // eslint-disable-next-line no-unused-vars
       const {
         ctx,
         data,
-        // eslint-disable-next-line no-unused-vars
         chartArea: { top, bottom, left, right, width, height },
-        // eslint-disable-next-line no-unused-vars
         scales: { x, y },
       } = chart;
 
@@ -114,7 +110,6 @@ function showChart(data) {
   });
 }
 
-// eslint-disable-next-line no-unused-vars
 function destroyChart() {
   if (chart) chart.destroy();
 }

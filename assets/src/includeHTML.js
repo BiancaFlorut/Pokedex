@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 async function includeHTML() {
     let includeElements = document.querySelectorAll('[w3-include-html]');
     for (let i = 0; i < includeElements.length; i++) {
