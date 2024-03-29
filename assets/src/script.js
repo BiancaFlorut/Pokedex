@@ -121,25 +121,9 @@ async function getPokeInfos(url) {
   pokemonsJSON.abilities.forEach((ability) => abilities.push({ ability: ability.ability.name, url: ability.ability.url }));
 
   let types = [];
-  pokemonsJSON.types.forEach((type) => types.push( {name: type.type.name, nameLang: null, url: type.type.url}));
+  pokemonsJSON.types.forEach((type) => types.push({ name: type.type.name, nameLang: null, url: type.type.url }));
 
-  const hpJson = pokemonsJSON.stats.find((stat) => stat.stat.name === "hp");
-  const hp = { name: "HP", value: hpJson.base_stat, url: hpJson.stat.url };
-
-  const attackJson = pokemonsJSON.stats.find((stat) => stat.stat.name === "attack");
-  const attack = { name: "Attack", value: attackJson.base_stat, url: attackJson.stat.url };
-
-  const defenseJson = pokemonsJSON.stats.find((stat) => stat.stat.name === "defense");
-  const defense = { name: "Defense", value: defenseJson.base_stat, url: defenseJson.stat.url };
-
-  const sp_attackJson = pokemonsJSON.stats.find((stat) => stat.stat.name === "special-attack");
-  const sp_attack = { name: "Sp. Attack", value: sp_attackJson.base_stat, url: sp_attackJson.stat.url };
-
-  const sp_defenseJson = pokemonsJSON.stats.find((stat) => stat.stat.name === "special-defense");
-  const sp_defense = {name: 'Sp. Defense', value: sp_defenseJson.base_stat, url: sp_defenseJson.stat.url};
-
-  const speedJson = pokemonsJSON.stats.find((stat) => stat.stat.name === "speed");
-  const speed = {name: 'Speed', value: speedJson.base_stat, url: speedJson.stat.url};
+  const stats = pokemonsJSON.stats;
 
   result = {
     image: pokemonsJSON["sprites"]["other"]["official-artwork"]["front_default"],
@@ -150,9 +134,21 @@ async function getPokeInfos(url) {
     abilities: abilities,
     name: pokemonsJSON.name,
     speciesURL: pokemonsJSON.species.url,
-    stats: { hp: hp, attack: attack, defense: defense, sp_attack: sp_attack, sp_defense: sp_defense, speed: speed },
+    stats: {
+      hp: getStatFromJson(stats, "hp"),
+      attack: getStatFromJson(stats, "attack"),
+      defense: getStatFromJson(stats, "defense"),
+      sp_attack: getStatFromJson(stats, "special-attack"),
+      sp_defense: getStatFromJson(stats, "special-defense"),
+      speed: getStatFromJson(stats, "speed"),
+    },
   };
   return result;
+}
+
+function getStatFromJson(json, statName) {
+  const newJson = json.find((stat) => stat.stat.name === statName);
+  return { name: statName.toUpperCase(), value: newJson.base_stat, url: newJson.stat.url };
 }
 
 async function loadBaseStats(pokemon) {
@@ -273,7 +269,7 @@ async function loadPokemonCard(id) {
   actualPokemon = await loadBaseStats(actualPokemon);
   loadTopCardInfo(actualPokemon);
   loadAbout(actualPokemon);
-  
+
   let data = loadChartData(actualPokemon);
   destroyChart();
   showChart(data);
@@ -300,7 +296,7 @@ function loadTopCardInfo(pokemon) {
   let formatId = pokemon.infos.id.toString().padStart(5, "0");
   document.getElementById("top_area").classList.add(pokemon.infos.types[0].name);
   let typesWithLang = [];
-  pokemon.infos.types.forEach((type) => typesWithLang.push({name: type.nameLang}));
+  pokemon.infos.types.forEach((type) => typesWithLang.push({ name: type.nameLang }));
   document.getElementById("type_area").innerHTML = getPokemonTypesHTML(typesWithLang);
   document.getElementById("id_area").innerHTML = `#${formatId}`;
   document.getElementById("pokemonImage").src = `${pokemon.infos.image}`;
