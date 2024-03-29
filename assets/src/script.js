@@ -116,14 +116,13 @@ async function getPokeInfos(url) {
   let result;
   let response = await fetch(url);
   let pokemonsJSON = await response.json();
+
   let abilities = [];
   pokemonsJSON.abilities.forEach((ability) => abilities.push({ ability: ability.ability.name, url: ability.ability.url }));
-  let typesJSON = pokemonsJSON["types"];
+
   let types = [];
-  for (let i = 0; i < typesJSON.length; i++) {
-    const element = typesJSON[i].type.name;
-    types.push(element);
-  }
+  pokemonsJSON.types.forEach((type) => types.push( {name: type.type.name, nameLang: null, url: type.type.url}));
+
   const hpJson = pokemonsJSON.stats.find((stat) => stat.stat.name === "hp");
   const hp = { name: "HP", value: hpJson.base_stat, url: hpJson.stat.url };
 
@@ -158,16 +157,16 @@ async function getPokeInfos(url) {
 
 async function loadBaseStats(pokemon) {
   const stats = pokemon.infos.stats;
-
   stats.hp.name = await getLangStat(stats.hp.url);
   stats.attack.name = await getLangStat(stats.attack.url);
   stats.defense.name = await getLangStat(stats.defense.url);
   stats.sp_attack.name = await getLangStat(stats.sp_attack.url);
   stats.sp_defense.name = await getLangStat(stats.sp_defense.url);
   stats.speed.name = await getLangStat(stats.speed.url);
-
-  pokemon.stats = stats;
-
+  for (let i = 0; i < pokemon.infos.types.length; i++) {
+    pokemon.infos.types[i].nameLang = await getLangStat(pokemon.infos.types[i].url);
+  }
+  pokemon.infos.stats = stats;
   return pokemon;
 }
 
@@ -230,7 +229,7 @@ function renderPokemonCard(pokemon, index) {
   let id = pokemon.infos.id.toString().padStart(3, "0");
   document.getElementById("pokemonCards").innerHTML +=
     /*html*/ `
-        <div id='${pokemon.name}' class='pokemonCard df_column ${pokemon.infos.types[0]}' onclick='openCard(${index})'>
+        <div id='${pokemon.name}' class='pokemonCard df_column ${pokemon.infos.types[0].name}' onclick='openCard(${index})'>
             <div class='id'>#${id}</div>
             <div class='df_row'>
                 <div class='df_column gap_8'>
@@ -271,9 +270,10 @@ async function loadPokemonCard(id) {
     return;
   }
   checkAvailability(id);
+  actualPokemon = await loadBaseStats(actualPokemon);
   loadTopCardInfo(actualPokemon);
   loadAbout(actualPokemon);
-  actualPokemon = await loadBaseStats(actualPokemon);
+  
   let data = loadChartData(actualPokemon);
   destroyChart();
   showChart(data);
@@ -298,8 +298,10 @@ function loadChartData(pokemon) {
 
 function loadTopCardInfo(pokemon) {
   let formatId = pokemon.infos.id.toString().padStart(5, "0");
-  document.getElementById("top_area").classList.add(pokemon.infos.types[0]);
-  document.getElementById("type_area").innerHTML = getPokemonTypesHTML(pokemon.infos.types);
+  document.getElementById("top_area").classList.add(pokemon.infos.types[0].name);
+  let typesWithLang = [];
+  pokemon.infos.types.forEach((type) => typesWithLang.push({name: type.nameLang}));
+  document.getElementById("type_area").innerHTML = getPokemonTypesHTML(typesWithLang);
   document.getElementById("id_area").innerHTML = `#${formatId}`;
   document.getElementById("pokemonImage").src = `${pokemon.infos.image}`;
 }
@@ -383,7 +385,6 @@ async function getAbility(ability) {
   return abilityLanguage;
 }
 
-// eslint-disable-next-line no-unused-vars
 function closeDialog() {
   document.getElementById("dialog_bg").classList.add("d_none");
   document.body.style.overflow = "";
@@ -395,7 +396,7 @@ function getPokemonTypesHTML(types) {
   for (let i = 0; i < types.length; i++) {
     const element = types[i];
     typesHTML += /*html*/ `
-          <div class='type_label'>${capitalizeFirstLetter(element)}</div>
+          <div class='type_label'>${capitalizeFirstLetter(element.name)}</div>
       `;
   }
   return typesHTML;
