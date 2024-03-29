@@ -51,7 +51,8 @@ function showChart(data) {
         //label
         ctx.font = "16px sans-serif bold";
         ctx.fillStyle = "rgba(180, 180, 180, 1)";
-        ctx.fillText(data.labels[index], left - 182, dataPoint.y);
+        ctx.textBaseline = "middle";
+        ctx.fillText(data.labels[index], left - 202, dataPoint.y);
 
         //label
         ctx.font = "16px sans-serif";
@@ -73,7 +74,7 @@ function showChart(data) {
     data,
     options: {
       layout: {
-        padding: { left: 180 },
+        padding: { left: 200 },
       },
       indexAxis: "y",
       plugins: {
