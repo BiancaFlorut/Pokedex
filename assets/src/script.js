@@ -7,12 +7,12 @@ let results = [];
 let language = null;
 let searching = false;
 let loading = 0;
+let loadingStepCard = 0;
 
 async function init() {
   await includeHTML();
   setLanguage("de");
   openMenu();
-  loadPokemons(URL_API);
 }
 
 function setLanguage(lang) {
@@ -154,13 +154,27 @@ function getStatFromJson(json, statName) {
 async function loadBaseStats(pokemon) {
   const stats = pokemon.infos.stats;
   stats.hp.name = await getLangStat(stats.hp.url);
+  loadingStepCard++;
+  setLoading(loadingStepCard * 100 / 9);
   stats.attack.name = await getLangStat(stats.attack.url);
+  loadingStepCard++;
+  setLoading(loadingStepCard * 100 / 9);
   stats.defense.name = await getLangStat(stats.defense.url);
+  loadingStepCard++;
+  setLoading(loadingStepCard * 100 / 9);
   stats.sp_attack.name = await getLangStat(stats.sp_attack.url);
+  loadingStepCard++;
+  setLoading(loadingStepCard * 100 / 9);
   stats.sp_defense.name = await getLangStat(stats.sp_defense.url);
+  loadingStepCard++;
+  setLoading(loadingStepCard * 100 / 9);
   stats.speed.name = await getLangStat(stats.speed.url);
+  loadingStepCard++;
+  setLoading(loadingStepCard * 100 / 9);
   for (let i = 0; i < pokemon.infos.types.length; i++) {
     pokemon.infos.types[i].nameLang = await getLangStat(pokemon.infos.types[i].url);
+    loadingStepCard++;
+    setLoading(loadingStepCard * 100 / 9);
   }
   pokemon.infos.stats = stats;
   return pokemon;
@@ -177,6 +191,8 @@ async function getSpeciesNameBreeding(pokemon) {
   let response = null;
   try {
     response = await fetch(pokemon.infos.speciesURL);
+    loadingStepCard++;
+    setLoading(loadingStepCard * 100 / 9);
     if (response.ok) {
       let pokeJSON = await response.json();
       let species = pokeJSON.genera.find((genus) => genus.language.name === language).genus;
@@ -242,6 +258,7 @@ function renderPokemonCard(pokemon, index) {
 }
 
 async function openCard(id) {
+  closeDialog();
   if (id != -1) {
     document.getElementById("dialog_bg").classList.remove("d_none");
     document.getElementById("dialog_bg").style.top = `${window.scrollY}px`;
@@ -253,9 +270,13 @@ async function openCard(id) {
 
 async function loadPokemonCard(id) {
   let actualPokemon;
+  setLoading(0);
+  loadingStepCard = 0;
   if (searching) {
     let pokemon = { infos: { url: results[id].url } };
     pokemon.infos = await getPokeInfos(pokemon.infos.url);
+    loadingStepCard++;
+    setLoading(loadingStepCard * 100 / 9);
     pokemon.name = capitalizeFirstLetter(pokemon.infos.name);
     actualPokemon = pokemon;
   } else {
@@ -266,6 +287,8 @@ async function loadPokemonCard(id) {
     return;
   }
   checkAvailability(id);
+  loadingStepCard++;
+  setLoading(loadingStepCard * 100 / 9);
   actualPokemon = await loadBaseStats(actualPokemon);
   loadTopCardInfo(actualPokemon);
   loadAbout(actualPokemon);
@@ -341,6 +364,8 @@ async function setEggGroups(gender, eggGroups, eggCycle) {
   for (let i = 0; i < eggGroups.length; i++) {
     const eggGroupURL = eggGroups[i];
     let group = await renderEggGroup(eggGroupURL);
+    loadingStepCard++;
+    setLoading(loadingStepCard * 100 / 9);
     if (i + 1 == eggGroups.length) {
       spacing = "";
     }
@@ -376,6 +401,8 @@ async function loadAbout(pokemon) {
 
 async function getAbility(ability) {
   let response = await fetch(ability.url);
+  loadingStepCard++;
+  setLoading(loadingStepCard * 100 / 9);
   let json = await response.json();
   let abilityLanguage = json.names.find((name) => name.language.name === language).name;
   return abilityLanguage;
@@ -385,6 +412,19 @@ function closeDialog() {
   document.getElementById("dialog_bg").classList.add("d_none");
   document.body.style.overflow = "";
   document.getElementById("top_area").classList = "background_image";
+  document.getElementById('pokemonImage').src = '';
+  document.getElementById('pokeName').innerHTML = '';
+  document.getElementById('id_area').innerHTML = '';
+  document.getElementById('type_area').innerHTML = '';
+  document.getElementById('species').innerHTML = '';
+  document.getElementById('height').innerHTML = '';
+  document.getElementById('weight').innerHTML = '';
+  document.getElementById('abilities').innerHTML = '';
+  document.getElementById('gender').innerHTML = '';
+  document.getElementById('eggGroup').innerHTML = '';
+  document.getElementById('eggCycle').innerHTML = '';
+  destroyChart();
+
 }
 
 function getPokemonTypesHTML(types) {

@@ -40,10 +40,10 @@ body {
   background-position-x: 110%;
   background-position-y: 120%;
   background-repeat: no-repeat;
-  cursor: pointer; 
+  cursor: pointer;
 }
 
-.pokemonCard:hover{
+.pokemonCard:hover {
   box-shadow: 0 0 10px rgba(94, 93, 93, 0.534);
   filter: brightness(110%);
 }
@@ -172,8 +172,12 @@ body {
 }
 
 .loading_status {
-  background: linear-gradient(39deg, rgba(228,255,0,1) 0%, rgba(41,243,241,1) 22%, rgba(121,123,159,1) 51%, rgba(173,98,171,1) 77%, rgba(199,36,39,1) 100%);
+  background: linear-gradient(39deg, rgba(228, 255, 0, 1) 0%, rgba(41, 243, 241, 1) 22%, rgba(121, 123, 159, 1) 51%, rgba(173, 98, 171, 1) 77%, rgba(199, 36, 39, 1) 100%);
   width: 50%;
   height: 8px;
   border-radius: 4px;
+}
+
+.cardView {
+  height: 2px;
 }

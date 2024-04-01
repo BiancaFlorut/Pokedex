@@ -117,4 +117,5 @@ function openMenu() {
 function setLoading(value) {
   if (value > 100) value = 100;
   document.getElementById('loadingValue').style.width = value + '%';
+  document.getElementById('loadingValueCard').style.width = value + '%';
 }
