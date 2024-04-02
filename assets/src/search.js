@@ -4,7 +4,6 @@ let timer;
 let step = 20;
 let totalNumberOfPokemons;
 
-// eslint-disable-next-line no-unused-vars
  function validate(id) {
   clearTimeout(timer);
    timer= setTimeout(search,1000, id);

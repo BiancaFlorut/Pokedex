@@ -154,27 +154,20 @@ function getStatFromJson(json, statName) {
 async function loadBaseStats(pokemon) {
   const stats = pokemon.infos.stats;
   stats.hp.name = await getLangStat(stats.hp.url);
-  loadingStepCard++;
-  setLoading(loadingStepCard * 100 / 9);
+  setLoading(loadingStepCard++ * 100 / pokeCallStack);
   stats.attack.name = await getLangStat(stats.attack.url);
-  loadingStepCard++;
-  setLoading(loadingStepCard * 100 / 9);
+  setLoading(loadingStepCard++ * 100 / pokeCallStack);
   stats.defense.name = await getLangStat(stats.defense.url);
-  loadingStepCard++;
-  setLoading(loadingStepCard * 100 / 9);
+  setLoading(loadingStepCard++ * 100 / pokeCallStack);
   stats.sp_attack.name = await getLangStat(stats.sp_attack.url);
-  loadingStepCard++;
-  setLoading(loadingStepCard * 100 / 9);
+  setLoading(loadingStepCard++ * 100 / pokeCallStack);
   stats.sp_defense.name = await getLangStat(stats.sp_defense.url);
-  loadingStepCard++;
-  setLoading(loadingStepCard * 100 / 9);
+  setLoading(loadingStepCard++ * 100 / pokeCallStack);
   stats.speed.name = await getLangStat(stats.speed.url);
-  loadingStepCard++;
-  setLoading(loadingStepCard * 100 / 9);
+  setLoading(loadingStepCard++ * 100 / pokeCallStack);
   for (let i = 0; i < pokemon.infos.types.length; i++) {
     pokemon.infos.types[i].nameLang = await getLangStat(pokemon.infos.types[i].url);
-    loadingStepCard++;
-    setLoading(loadingStepCard * 100 / 9);
+    setLoading(loadingStepCard++ * 100 / pokeCallStack);
   }
   pokemon.infos.stats = stats;
   return pokemon;
@@ -191,13 +184,13 @@ async function getSpeciesNameBreeding(pokemon) {
   let response = null;
   try {
     response = await fetch(pokemon.infos.speciesURL);
-    loadingStepCard++;
-    setLoading(loadingStepCard * 100 / 9);
+    setLoading(loadingStepCard++ * 100 / 20);
     if (response.ok) {
       let pokeJSON = await response.json();
       let species = pokeJSON.genera.find((genus) => genus.language.name === language).genus;
       let name = pokeJSON.names.find((name) => name.language.name === language).name;
       pokemon.infos.species = species;
+      pokemon.infos.evolutionURL = pokeJSON.evolution_chain.url;
       pokemon.name = name;
       let [genderRatio, eggGroup, eggCycle] = getGenderEggGroupEggCycle(pokeJSON);
       setEggGroups(genderRatio, eggGroup, eggCycle);
@@ -275,8 +268,7 @@ async function loadPokemonCard(id) {
   if (searching) {
     let pokemon = { infos: { url: results[id].url } };
     pokemon.infos = await getPokeInfos(pokemon.infos.url);
-    loadingStepCard++;
-    setLoading(loadingStepCard * 100 / 9);
+    setLoading(loadingStepCard++ * 100 / 20);
     pokemon.name = capitalizeFirstLetter(pokemon.infos.name);
     actualPokemon = pokemon;
   } else {
@@ -287,15 +279,15 @@ async function loadPokemonCard(id) {
     return;
   }
   checkAvailability(id);
-  loadingStepCard++;
-  setLoading(loadingStepCard * 100 / 9);
+  setLoading(loadingStepCard++ * 100 / pokeCallStack);
   actualPokemon = await loadBaseStats(actualPokemon);
   loadTopCardInfo(actualPokemon);
-  loadAbout(actualPokemon);
+  actualPokemon = await loadAbout(actualPokemon);
 
   let data = loadChartData(actualPokemon);
   destroyChart();
   showChart(data);
+  getEvolution(actualPokemon.infos.evolutionURL);
 }
 
 function loadChartData(pokemon) {
@@ -364,8 +356,7 @@ async function setEggGroups(gender, eggGroups, eggCycle) {
   for (let i = 0; i < eggGroups.length; i++) {
     const eggGroupURL = eggGroups[i];
     let group = await renderEggGroup(eggGroupURL);
-    loadingStepCard++;
-    setLoading(loadingStepCard * 100 / 9);
+    setLoading(loadingStepCard++ * 100 / pokeCallStack);
     if (i + 1 == eggGroups.length) {
       spacing = "";
     }
@@ -397,12 +388,12 @@ async function loadAbout(pokemon) {
     }
     document.getElementById("abilities").innerHTML += capitalizeFirstLetter(abilityLanguage) + spacing;
   }
+  return poke;
 }
 
 async function getAbility(ability) {
   let response = await fetch(ability.url);
-  loadingStepCard++;
-  setLoading(loadingStepCard * 100 / 9);
+  setLoading(loadingStepCard++ * 100 / pokeCallStack);
   let json = await response.json();
   let abilityLanguage = json.names.find((name) => name.language.name === language).name;
   return abilityLanguage;
@@ -423,6 +414,7 @@ function closeDialog() {
   document.getElementById('gender').innerHTML = '';
   document.getElementById('eggGroup').innerHTML = '';
   document.getElementById('eggCycle').innerHTML = '';
+  document.getElementById("evolution").innerHTML = '';
   destroyChart();
 
 }

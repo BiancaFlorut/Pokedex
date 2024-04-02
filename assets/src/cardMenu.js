@@ -5,6 +5,7 @@ const menuItems = [
   { menuItem: "movesMenuItem", menuContent: "moves" },
 ];
 let chart;
+const pokeCallStack = 25;
 
 function stopPropagation(event) {
   event.stopPropagation();
@@ -68,7 +69,7 @@ function showChart(data) {
       });
     },
   };
-  // eslint-disable-next-line no-undef
+
   chart = new Chart(ctx, {
     type: "bar",
     data,
@@ -111,4 +112,91 @@ function showChart(data) {
 
 function destroyChart() {
   if (chart) chart.destroy();
+}
+
+async function getEvolution(url) {
+  if (url) {
+    let result = await fetch(url);
+    let json = await result.json();
+    setLoading(loadingStepCard++ * 100 / pokeCallStack);
+    const pokemon = await getPokeNames(json);
+     document.getElementById("evolution").innerHTML = renderEvolutions(pokemon);
+     setLoading(100);
+  } else {
+    document.getElementById("evolution").innerHTML = "There is no evolution for this Pokemon.";
+  }
+}
+
+function renderEvolutions(pokemon) {
+  
+  let html = /*html*/ `
+  <div class='df_row df_center gap_32'>
+    <div class='small_evolution'>
+      <img src="${pokemon.src}" alt="${pokemon.langName}">
+      <div>${pokemon.langName}</div>
+    </div>
+  `;
+  if (pokemon.evolutions) {
+    const evolutions = pokemon.evolutions;
+    html += /*html*/ `
+    <img src="./assets/icons/right-arrow-black.png" alt="">
+    <div class='df_column gap_32'>
+  `;
+    evolutions.forEach( (evolution) => {
+    html +=  renderEvolutions(evolution);
+  });
+    html += /*html*/ `
+    </div>
+  `;
+  }
+  html += /*html*/ `
+    </div>
+  `;
+  return html;
+}
+
+async function getImageAndName(url) {
+  const result = await fetch(url);
+  setLoading(loadingStepCard++ * 100 / pokeCallStack);
+  const json = await result.json();
+  const name = json.names.find((name) => name.language.name === language).name;
+  const src = await getImage(json.varieties[0].pokemon.url);
+  return [src, name];
+}
+
+async function getImage(url) {
+  const result = await fetch(url);
+  setLoading(loadingStepCard++ * 100 / pokeCallStack);
+  const json = await result.json();
+  return json.sprites.other['official-artwork'].front_default;
+}
+
+async function getPokeNames(json) {
+  let pokemon = {};
+  pokemon.name = json.chain.species.name;
+  pokemon.url = json.chain.species.url;
+  const [src, langName] = await getImageAndName(pokemon.url);
+  pokemon.src = src;
+  pokemon.langName = langName;
+  pokemon.evolutions = [];
+  if (json.chain.evolves_to.length > 0) {
+    for (const element of json.chain.evolves_to) {
+      const evolution = await searchEvolutionFrom(element);
+      pokemon.evolutions.push(evolution);
+    }
+  }
+  return pokemon;
+}
+
+async function searchEvolutionFrom(json) {
+  const [src, langName] = await getImageAndName(json.species.url);
+  const evolution = { name: json.species.name, url: json.species.url, src: src, langName: langName};
+  if (json.evolves_to.length > 0) {
+    evolution.evolutions = [];
+    for (const element of json.evolves_to) {
+      let newEvolution = await searchEvolutionFrom(element);
+      evolution.evolutions.push(newEvolution);
+    }
+  }
+  return evolution;
 }

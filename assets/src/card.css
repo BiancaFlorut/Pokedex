@@ -177,6 +177,34 @@ td {
   width: 100%;
 }
 
+#about,
+#baseStats,
+#evolution,
+#moves {
+  min-height: 300px;
+}
+
+.evolution {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  max-height: 300px;
+  overflow: auto;
+  padding: 32px 0;
+}
+
+.small_evolution {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.small_evolution img {
+  height: 60px;
+  object-fit: contain;
+}
+
 .d_none {
   display: none;
 }

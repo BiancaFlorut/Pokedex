@@ -66,12 +66,25 @@ body {
   flex-direction: column;
 }
 
+.df_center {
+  align-items: center;
+  justify-content: center;
+}
+
 .df_column h2 {
   margin: 0;
 }
 
 .gap_8 {
   gap: 8px;
+}
+
+.gap_32 {
+  gap: 32px;
+}
+
+.gap_32 img {
+  height: 16px;
 }
 
 .image img {
