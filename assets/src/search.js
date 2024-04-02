@@ -40,6 +40,11 @@ function search(id) {
         await renderNextPokemons();
       }
     };
+    document.body.ontouchmove = async function() {
+      if (isScrolledToBottom()) {
+        await renderNextPokemons();
+      }
+    };
   }
 }
 
@@ -47,6 +52,7 @@ function abortSearch() {
   if (controller) {
     controller.abort();
     window.onscroll = "";
+    document.body.ontouchmove = '';
     console.log('searching is aborted. ');
   }
 }

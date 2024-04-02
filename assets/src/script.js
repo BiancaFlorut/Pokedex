@@ -53,6 +53,11 @@ async function renderPokemons(array, err) {
         await renderNextPokemons();
       }
     };
+    document.body.ontouchmove = async function() {
+      if (isScrolledToBottom()) {
+        await renderNextPokemons();
+      }
+    };
   }
   if (err) {
     console.error("Error in the caching the first pokemons", err);
@@ -61,10 +66,16 @@ async function renderPokemons(array, err) {
 
 async function renderNextPokemons() {
   window.onscroll = "";
+  document.body.ontouchmove = '';
   nextPokemons.forEach((pokemon, index) => renderPokemonCard(pokemon, pokemons.length + index));
   pokemons = pokemons.concat(nextPokemons);
   await loadNextPokemons(nextUrl);
   window.onscroll = async function () {
+    if (isScrolledToBottom()) {
+      await renderNextPokemons();
+    }
+  };
+  document.body.ontouchmove = async function() {
     if (isScrolledToBottom()) {
       await renderNextPokemons();
     }

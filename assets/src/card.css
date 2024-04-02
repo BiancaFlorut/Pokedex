@@ -56,10 +56,21 @@
 .nav_area {
   display: flex;
   justify-content: space-between;
-  padding-top: 40px;
+  padding-top: 20px;
 }
 
-.nav_area img {
+.close_area {
+  display: flex;
+  flex-direction: column;
+}
+
+.close_icon {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nav_area,
+.close_area img {
   height: 20px;
   cursor: pointer;
 }
@@ -191,13 +202,13 @@ td {
   justify-content: center;
   max-height: 300px;
   overflow: auto;
-  padding: 32px 0;
 }
 
 .small_evolution {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  text-align: center;
 }
 
 .small_evolution img {
@@ -232,5 +243,16 @@ td {
   .bottom_area {
     padding: 16px;
     padding-top: 50px;
+  }
+  .gap_32 {
+    gap: 12px;
+  }
+  #about,
+  #baseStats,
+  #evolution,
+  #moves {
+    min-height: 100px;
+    max-height: 200px;
+    overflow: auto;
   }
 }

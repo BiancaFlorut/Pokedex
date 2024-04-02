@@ -194,3 +194,11 @@ body {
 .cardView {
   height: 2px;
 }
+
+.mtb_32 {
+  margin: 32px 0;
+}
+
+.position_relative {
+  position: relative;
+}
