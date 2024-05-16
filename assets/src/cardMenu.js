@@ -128,7 +128,6 @@ async function getEvolution(url) {
 }
 
 function renderEvolutions(pokemon) {
-  
   let html = /*html*/ `
   <div class='df_row df_center gap_32'>
     <div class='small_evolution'>
