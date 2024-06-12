@@ -108,6 +108,7 @@ async function searchNext(url, search) {
 function openMenu() {
   let element = document.getElementById("menuList");
   let button = document.getElementById("menuIcon");
+  document.getElementById("headerLink").href = "";
   if (menu) {
     element.classList.add("d_none");
     button.style.backgroundColor = "#f6f6f6";

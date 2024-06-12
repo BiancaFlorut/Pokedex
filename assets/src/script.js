@@ -11,6 +11,7 @@ let loadingStepCard = 0;
 
 async function init() {
   await includeHTML();
+  document.getElementById("menuIconImg").src = "./assets/icons/menu.png";
   setLanguage("de");
   openMenu();
 }
@@ -222,13 +223,13 @@ function getGenderEggGroupEggCycle(json) {
       genderRatio = "Geschlechtslos";
       break;
     case 0:
-      genderRatio = /*html*/ `<img src="../assets/icons/male.png" alt="">100%`;
+      genderRatio = /*html*/ `<img src="./assets/icons/male.png" alt="">100%`;
       break;
     case 8:
-      genderRatio = /*html*/ `<img src="../assets/icons/male.png" alt="">87.5% <img src="../assets/icons/female.png" alt=""> 12.5%`;
+      genderRatio = /*html*/ `<img src="./assets/icons/male.png" alt="">87.5% <img src="./assets/icons/female.png" alt=""> 12.5%`;
       break;
     default:
-      genderRatio = `<img src="../assets/icons/male.png" alt="">${(genderRate / 8) * 100}% ,<img src="../assets/icons/female.png" alt="female"> ${100 - (genderRate / 8) * 100}% `;
+      genderRatio = `<img src="./assets/icons/male.png" alt="">${(genderRate / 8) * 100}% ,<img src="./assets/icons/female.png" alt="female"> ${100 - (genderRate / 8) * 100}% `;
       break;
   }
   let eggGroup = json.egg_groups.map((eggGroup) => eggGroup.url);

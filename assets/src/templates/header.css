@@ -134,3 +134,7 @@ input:focus {
     display: flex;
   }
 }
+
+#en, #de {
+  display: none;
+}
