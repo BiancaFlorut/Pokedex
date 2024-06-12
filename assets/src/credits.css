@@ -5,3 +5,7 @@
 .menu_items {
     display: none;
 }
+
+#menuIcon {
+    display: none;
+  }
