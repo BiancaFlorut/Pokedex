@@ -12,7 +12,7 @@ let loadingStepCard = 0;
 async function init() {
   await includeHTML();
   document.getElementById("menuIconImg").src = "./assets/icons/menu.png";
-  document.getElementById("logoImg").src = "./../assets/icons/game_g.png";
+  document.getElementById("logoImg").src = "./assets/icons/game_g.png";
   setLanguage("de");
   openMenu();
 }
